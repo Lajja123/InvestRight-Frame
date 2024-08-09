@@ -4,6 +4,7 @@ import { Button, Frog, TextInput } from "frog";
 import { devtools } from "frog/dev";
 import { handle } from "frog/next";
 import { serveStatic } from "frog/serve-static";
+import abi from "../../abi/dummy.json";
 
 const app = new Frog({
   assetsPath: "/",
@@ -13,7 +14,7 @@ const app = new Frog({
 
 app.frame("/", (c) => {
   const baseUrl = process.env.NEXT_PUBLIC_URL;
-  const background = `${baseUrl}/bg.png`;
+  const background = `${baseUrl}/frame1.png`;
   return c.res({
     image: (
       <div
@@ -23,6 +24,7 @@ app.frame("/", (c) => {
           backgroundSize: "cover",
           backgroundPosition: "center",
           display: "flex",
+          imageAspectRatio: "1:1",
           flexDirection: "column",
           flexWrap: "nowrap",
           height: "100%",
@@ -47,7 +49,17 @@ app.frame("/", (c) => {
         </div>
       </div>
     ),
-    intents: [<Button action="/viewDetails">View</Button>],
+    intents: [<Button.Transaction target="/mint">View</Button.Transaction>],
+  });
+});
+
+app.transaction("/mint", (c) => {
+  // Contract transaction response.
+  return c.contract({
+    abi,
+    chainId: "eip155:84532",
+    functionName: "retrieve",
+    to: "0xd9145CCE52D386f254917e481eB44e9943F39138",
   });
 });
 
